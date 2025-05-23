@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { saveAs } from "file-saver";
+import Papa from "papaparse";
 
 export default function App() {
-  const [sharedLink, setSharedLink] = useState("");
-  const [directLink, setDirectLink] = useState("");
+  const [sharedLinks, setSharedLinks] = useState("");
+  const [csvOutput, setCsvOutput] = useState(null);
 
   const generateDirectLink = (link) => {
     if (link.includes("drive.google.com")) {
@@ -24,29 +26,33 @@ export default function App() {
     return "Unsupported or invalid link format.";
   };
 
-  const handleGenerate = () => {
-    const result = generateDirectLink(sharedLink.trim());
-    setDirectLink(result);
+  const handleGenerateCSV = () => {
+    const linksArray = sharedLinks.split(/,\s*/).filter(Boolean);
+    const csvData = linksArray.map(link => ({
+      original: link,
+      direct: generateDirectLink(link)
+    }));
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "direct_links.csv");
+    setCsvOutput(csv);
   };
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-4">
       <h1 className="text-2xl font-bold mb-4">Direct Download Link Generator</h1>
       <div className="bg-white shadow-md rounded p-4 space-y-4">
-        <input
-          className="w-full border rounded p-2"
-          placeholder="Paste your shared Google Drive / OneDrive / SharePoint link"
-          value={sharedLink}
-          onChange={(e) => setSharedLink(e.target.value)}
+        <textarea
+          className="w-full border rounded p-2 h-32"
+          placeholder="Paste a comma-separated list of links"
+          value={sharedLinks}
+          onChange={(e) => setSharedLinks(e.target.value)}
         />
-        <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleGenerate}>
-          Generate Direct Link
+        <button className="bg-green-600 text-white px-4 py-2 rounded" onClick={handleGenerateCSV}>
+          Generate CSV
         </button>
-        {directLink && (
-          <div className="break-words p-2 bg-gray-100 rounded">
-            <strong>Direct Link:</strong>
-            <p className="text-blue-600 mt-1">{directLink}</p>
-          </div>
+        {csvOutput && (
+          <p className="text-sm text-green-700">CSV file generated and downloaded!</p>
         )}
       </div>
     </div>
