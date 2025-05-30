@@ -9,7 +9,7 @@ export default function App() {
   const generateDirectLink = (link) => {
     if (link.includes("drive.google.com")) {
       const match = link.match(/\/d\/([^/]+)/);
-      if (match) return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+      if (match) return `https://drive.usercontent.google.com/download?export=download&id=${match[1]}`;
       const altMatch = link.match(/id=([^&]+)/);
       if (altMatch) return `https://drive.usercontent.google.com/download?export=download&id=${altMatch[1]}`;
       return "Invalid Google Drive link";
