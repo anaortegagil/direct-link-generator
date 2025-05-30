@@ -11,7 +11,7 @@ export default function App() {
       const match = link.match(/\/d\/([^/]+)/);
       if (match) return `https://drive.google.com/uc?export=download&id=${match[1]}`;
       const altMatch = link.match(/id=([^&]+)/);
-      if (altMatch) return `https://drive.google.com/uc?export=download&id=${altMatch[1]}`;
+      if (altMatch) return `https://drive.usercontent.google.com/download?export=download&id=${altMatch[1]}`;
       return "Invalid Google Drive link";
     } else if (link.includes("1drv.ms")) {
       return "Please open the 1drv.ms link in a browser to get the full OneDrive link.";
